@@ -16,7 +16,7 @@ namespace DB.TemporalTable.Api.Profiles
 
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Name)
+            builder.Property(p => p.Product)
                 .HasColumnType("varchar(50)")
                 .IsRequired();
 
@@ -29,8 +29,8 @@ namespace DB.TemporalTable.Api.Profiles
                 .HasColumnType("varchar(50)")
                 .IsRequired(false);
 
-            builder.Property(p => p.RowTotal)
-                .HasColumnType("numeric(29, 2)");
+            builder.Property(p => p.CreatedBy)
+                 .HasColumnType("varchar(50)");
         }
     }
 }

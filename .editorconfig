@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# CS8601: Possible null reference assignment.
+dotnet_diagnostic.CS8601.severity = none
+
+# S6932: Use model binding instead of reading raw request data
+dotnet_diagnostic.S6932.severity = none

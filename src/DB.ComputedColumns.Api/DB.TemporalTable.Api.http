@@ -4,7 +4,7 @@ POST {{TemportalTables_Api_HostAddress}}/orders
 Content-Type: application/json
 Current-User: "Leonardo Almeida"
 {
-    "name": "TV SAMSUNG",
+    "Product": "TV SAMSUNG",
     "description": "TV SAMSUNG 85' QLED ULTRA HD",
     "unitPrice": 90010.00,
     "quantity": 1
@@ -15,7 +15,7 @@ PATCH {{TemportalTables_Api_HostAddress}}/orders/1
 Content-Type: application/json
 Current-User: "Eduardo Almeida"
 {
-   "name": "TV SAMSUNG",
+    "Product": "TV SAMSUNG",
     "description": "TV SAMSUNG 98' QLED",
     "unitPrice": 200000.00,
     "quantity": 1

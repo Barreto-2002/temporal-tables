@@ -9,27 +9,21 @@ namespace DB.TemporalTable.Api.Controllers
 
     [ApiController]
     [Route("orders")]
-    public class OrderController : ControllerBase
+    public class OrderController(StoreContext storeContext, IHttpContextAccessor httpContextAccessor) : ControllerBase
     {
-        public readonly StoreContext _storeContext;
-        public readonly IHttpContextAccessor _httpContextAccessor;
-
-        public OrderController(StoreContext storeContext, IHttpContextAccessor httpContextAccessor)
-        {
-            _storeContext = storeContext;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        public readonly StoreContext _storeContext = storeContext;
+        private readonly string _currentUser = httpContextAccessor?.HttpContext?.Request?.Headers["Current-User"];
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] OrderRequest orderRequest)
         {
             var order = new Order
             {
+                Product = orderRequest.Product,
                 Description = orderRequest.Description,
-                Name = orderRequest.Name,
                 Quantity = orderRequest.Quantity,
                 UnitPrice = orderRequest.UnitPrice,
-                CreatedBy = _httpContextAccessor.HttpContext.Request.Headers["Current-User"].ToString()
+                CreatedBy = _currentUser
             };
 
             await _storeContext.Order.AddAsync(order);
@@ -44,10 +38,11 @@ namespace DB.TemporalTable.Api.Controllers
             var order = await _storeContext.Order.SingleAsync(s => s.Id == id);
 
             order.Description = orderRequest.Description;
-            order.Name = orderRequest.Name;
+            order.Product = orderRequest.Product;
             order.Quantity = orderRequest.Quantity;
             order.UnitPrice = orderRequest.UnitPrice;
-            order.CreatedBy = _httpContextAccessor.HttpContext.Request.Headers["Current-User"].ToString();
+            order.CreatedBy = _currentUser;
+
             await _storeContext.SaveChangesAsync();
 
             return NoContent();
@@ -61,13 +56,14 @@ namespace DB.TemporalTable.Api.Controllers
                 .OrderByDescending(emp => EF.Property<DateTime>(emp, "PeriodStart"))
                 .Select(order => new OrderResponse(
                     order.Id,
-                    order.Name,
+                    order.Product,
                     order.Description,
                     order.UnitPrice,
                     order.Quantity,
-                    order.RowTotal,
+                    order.CreatedBy,
                   EF.Property<DateTime>(order, "PeriodStart"),
-                  EF.Property<DateTime>(order, "PeriodEnd"))
+                  EF.Property<DateTime>(order, "PeriodEnd")
+                  )
                 ).ToListAsync();
 
             return Ok(orders);
